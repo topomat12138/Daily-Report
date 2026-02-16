@@ -1,0 +1,64 @@
+name: arXiv Daily Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 1 * * *"
+
+jobs:
+  run-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Restore arXiv DB cache
+        id: restore-db
+        uses: actions/cache/restore@v4
+        with:
+          path: arxiv.db
+          key: arxiv-db-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            arxiv-db-${{ github.ref_name }}-
+
+      - name: Run report script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
+          OPENAI_TIMEOUT_SEC: ${{ vars.OPENAI_TIMEOUT_SEC || '60' }}
+          OPENAI_MAX_RETRIES: ${{ vars.OPENAI_MAX_RETRIES || '3' }}
+          REPORT_CHUNK_SIZE: ${{ vars.REPORT_CHUNK_SIZE || '20' }}
+        run: python ArxivDailyReport
+
+      - name: Save arXiv DB cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: arxiv.db
+          key: arxiv-db-${{ github.ref_name }}-${{ github.run_id }}
+
+      - name: Upload report artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arxiv-daily-artifacts-${{ github.run_number }}
+          path: |
+            arxiv_daily_report_*.md
+            arxiv_daily_report.log
+            arxiv.db
+          if-no-files-found: warn
+          retention-days: 14
