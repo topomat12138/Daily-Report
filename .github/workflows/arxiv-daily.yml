@@ -42,7 +42,7 @@ jobs:
           OPENAI_TIMEOUT_SEC: ${{ vars.OPENAI_TIMEOUT_SEC || '60' }}
           OPENAI_MAX_RETRIES: ${{ vars.OPENAI_MAX_RETRIES || '3' }}
           REPORT_CHUNK_SIZE: ${{ vars.REPORT_CHUNK_SIZE || '20' }}
-        run: python ArxivDailyReport
+        run: python ArxivDailyReport.py
 
       - name: Save arXiv DB cache
         if: always()
