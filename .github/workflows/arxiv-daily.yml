@@ -3,7 +3,7 @@ name: arXiv Daily Report
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 1 * * *"
+    - cron: "20 2 * * 1-5"
 
 jobs:
   run-report:
