@@ -1,0 +1,7 @@
+.DS_Store
+.venv/
+__pycache__/
+*.pyc
+arxiv.db
+arxiv_daily_report.log
+arxiv_daily_report_*.md
