@@ -84,18 +84,22 @@ def call_chatgpt_with_retry(client, model, run_time, papers, timeout_sec, max_at
                 len(papers),
                 timeout_sec,
             )
-            resp = client.chat.completions.create(
-                model=model,
-                temperature=0.2,
-                timeout=timeout_sec,
-                messages=[
+            request_kwargs = {
+                "model": model,
+                "timeout": timeout_sec,
+                "messages": [
                     {
                         "role": "system",
                         "content": "You write accurate technical summaries for condensed matter physics readers.",
                     },
                     {"role": "user", "content": user_prompt},
                 ],
-            )
+            }
+            # GPT-5 family currently only supports the default temperature.
+            if not model.startswith("gpt-5"):
+                request_kwargs["temperature"] = 0.2
+
+            resp = client.chat.completions.create(**request_kwargs)
             content = resp.choices[0].message.content
             if content:
                 return content.strip()
