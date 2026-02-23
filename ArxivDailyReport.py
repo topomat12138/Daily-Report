@@ -124,7 +124,7 @@ def generate_report_with_chatgpt(papers, run_time):
 
     model = os.getenv("OPENAI_MODEL", "gpt-5-mini")
     client = OpenAI(api_key=api_key)
-    timeout_sec = int(os.getenv("OPENAI_TIMEOUT_SEC", "90"))
+    timeout_sec = int(os.getenv("OPENAI_TIMEOUT_SEC", "60"))
     max_attempts = int(os.getenv("OPENAI_MAX_RETRIES", "3"))
     chunk_size = int(os.getenv("REPORT_CHUNK_SIZE", "10"))
 
