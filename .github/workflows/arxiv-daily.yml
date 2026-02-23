@@ -41,7 +41,7 @@ jobs:
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-5-mini' }}
           OPENAI_TIMEOUT_SEC: ${{ vars.OPENAI_TIMEOUT_SEC || '60' }}
           OPENAI_MAX_RETRIES: ${{ vars.OPENAI_MAX_RETRIES || '3' }}
-          REPORT_CHUNK_SIZE: ${{ vars.REPORT_CHUNK_SIZE || '20' }}
+          REPORT_CHUNK_SIZE: ${{ vars.REPORT_CHUNK_SIZE || '10' }}
         run: python ArxivDailyReport.py
 
       - name: Save arXiv DB cache
